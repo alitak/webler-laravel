@@ -23,18 +23,34 @@ Route::group([
     'as' => 'products.',
 ], function () {
     Route::get('', function () {
-        return '
-    <h2><a href="' . route('products.show', ['product_id' => 1]) . '">Tej</a></h2>
-    <h2><a href="' . route('products.show', [2]) . '">Kenyér</a></h2>
-    <h2><a href="' . route('products.show', 3) . '">Fogkrém</a></h2>
-    ';
+        $return = '';
+//        \App\Models\Product::all()->each(function($product) use (&$return) {
+//            $return .= '
+//                    <h2>
+//                        <a href="' . route('products.show', $product->id) . '">
+//                            ' . $product->name . '
+//                        </a>
+//                    </h2>';
+//        });
+
+        foreach (\App\Models\Product::all() as $product) {
+            $return .= '
+                    <h2>
+                        <a href="' . route('products.show', $product->id) . '">
+                            ' . $product->name . '
+                        </a>
+                    </h2>';
+        }
+        return $return;
     })->name('index');
 
-    Route::get('/{product_id}/show', function (int $product_id) {
-        return match ($product_id) {
-            1 => 'Tej',
-            2 => 'Kenyér',
-            3 => 'Fogkrém',
-        };
-    })->whereNumber(['product_id'])->name('show');
+//    \Illuminate\Support\Facades\DB::listen(function ($query) {
+//        logger($query->sql, $query->bindings);
+//    });
+
+    Route::get('/{product}/show', function (\App\Models\Product $product) {
+//        return \App\Models\Product::query()->where('id', $product_id)->first();
+//        return \App\Models\Product::query()->find($product_id);
+        return $product;
+    })->name('show');// ->whereNumber(['product_id'])
 });
