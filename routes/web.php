@@ -14,13 +14,27 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return 'Hello world!';
+    return 'Hello world! <a href="' . route('products.index') . '">Termékek</a>';
 //    return view('welcome');
 });
 
-Route::get('/products', function() {
-    return 'Product list';
+Route::group([
+    'prefix' => 'items',
+    'as' => 'products.',
+], function () {
+    Route::get('', function () {
+        return '
+    <h2><a href="' . route('products.show', ['product_id' => 1]) . '">Tej</a></h2>
+    <h2><a href="' . route('products.show', [2]) . '">Kenyér</a></h2>
+    <h2><a href="' . route('products.show', 3) . '">Fogkrém</a></h2>
+    ';
+    })->name('index');
+
+    Route::get('/{product_id}/show', function (int $product_id) {
+        return match ($product_id) {
+            1 => 'Tej',
+            2 => 'Kenyér',
+            3 => 'Fogkrém',
+        };
+    })->whereNumber(['product_id'])->name('show');
 });
-
-
-// foo bar
