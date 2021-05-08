@@ -32,21 +32,21 @@ Route::group([
 //                        </a>
 //                    </h2>';
 //        });
+    \Illuminate\Support\Facades\DB::listen(function ($query) {
+        logger($query->sql, $query->bindings);
+    });
 
-        foreach (\App\Models\Product::all() as $product) {
+
+        foreach (\App\Models\Product::query()->get()->load('category') as $product) {
             $return .= '
                     <h2>
                         <a href="' . route('products.show', $product->id) . '">
-                            ' . $product->name . '
+                            ' . $product->name . ' - ' . $product->category->name . '
                         </a>
                     </h2>';
         }
         return $return;
     })->name('index');
-
-//    \Illuminate\Support\Facades\DB::listen(function ($query) {
-//        logger($query->sql, $query->bindings);
-//    });
 
     Route::get('/{product}/show', function (\App\Models\Product $product) {
 //        return \App\Models\Product::query()->where('id', $product_id)->first();
